@@ -1,0 +1,1 @@
+# bolao-mundial-2026
