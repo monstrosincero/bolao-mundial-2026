@@ -595,7 +595,8 @@
     const pred = userPredictions[matchId];
     const isFinished = match.status === 'FINISHED';
     const isLive = match.status === 'IN_PLAY' || match.status === 'PAUSED';
-    const kickoff = new Date(match.utcDate).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
+    const kickoffDate = new Date(match.utcDate);
+    const kickoff = kickoffDate.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
     const group = match.group || match.stage || '';
 
     const home = match.homeTeam?.shortName || match.homeTeam?.name || '?';
@@ -616,12 +617,13 @@
       const ft = match.score?.fullTime;
       centerContent = `<div class="final-score" style="color:var(--red)">${ft?.home ?? 0} – ${ft?.away ?? 0}</div>`;
     } else {
+      const inputDisabled = isFinished || matchStarted;
       centerContent = `
         <input type="number" class="score-input" id="h_${matchId}" min="0" max="20"
-          value="${pred ? pred.home_score : ''}" placeholder="–" ${isFinished ? 'disabled' : ''} />
+          value="${pred ? pred.home_score : ''}" placeholder="–" ${inputDisabled ? 'disabled' : ''} />
         <span class="score-sep">:</span>
         <input type="number" class="score-input" id="a_${matchId}" min="0" max="20"
-          value="${pred ? pred.away_score : ''}" placeholder="–" ${isFinished ? 'disabled' : ''} />`;
+          value="${pred ? pred.away_score : ''}" placeholder="–" ${inputDisabled ? 'disabled' : ''} />`;
     }
 
     let badgeHtml = '';
@@ -636,7 +638,8 @@
       badgeHtml = `<span class="saved-badge show">✓ Guardado: ${pred.home_score}–${pred.away_score}</span>`;
     }
 
-    const canSave = !isFinished && !isLive;
+    const matchStarted = new Date(match.utcDate) <= new Date();
+    const canSave = !isFinished && !isLive && !matchStarted;
 
     return `
       <div class="match-card">
@@ -657,7 +660,7 @@
         </div>
         <div class="match-footer">
           ${badgeHtml || '<span></span>'}
-          ${canSave ? `<button class="btn-save" onclick="savePrediction('${matchId}')">Guardar</button>` : '<span></span>'}
+          ${canSave ? `<button class="btn-save" onclick="savePrediction('${matchId}')">Guardar</button>` : (!isFinished && !isLive && matchStarted) ? `<span class="deadline-note">⏱ Jogo já começou</span>` : '<span></span>'}
         </div>
       </div>`;
   }
