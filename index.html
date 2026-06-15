@@ -421,16 +421,21 @@
   async function fetchTodayMatches() {
     try {
       const from = getDateStr(0);
-      const to = getDateStr(1);
-      const res = await fetch(
-        `https://api.football-data.org/v4/competitions/${WC_CODE}/matches?dateFrom=${from}&dateTo=${to}`,
-        { headers: { 'X-Auth-Token': FD_KEY } }
-      );
-      if (!res.ok) throw new Error('API error: ' + res.status);
+      const to = getDateStr(2); // dateTo is EXCLUSIVE in football-data.org, so +2 to include tomorrow
+      const url = `/api/matches?dateFrom=${from}&dateTo=${to}`;
+      console.log('[API] Fetching:', url);
+      const res = await fetch(url);
       const data = await res.json();
+      console.log('[API] Status:', res.status, '| Response:', JSON.stringify(data).substring(0, 300));
+      if (!res.ok) {
+        showToast('Erro API: ' + (data.message || res.status), 'error');
+        return [];
+      }
+      console.log('[API] Matches found:', data.matches?.length ?? 0);
       return data.matches || [];
     } catch (e) {
-      console.error('API error:', e);
+      console.error('[API] Exception:', e);
+      showToast('Erro de ligação à API', 'error');
       return [];
     }
   }
