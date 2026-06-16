@@ -428,7 +428,7 @@
   async function fetchTodayMatches() {
     try {
       const from = getDateStr(0);
-      const to = getDateStr(2); // dateTo is EXCLUSIVE in football-data.org, so +2 to include tomorrow
+      const to = getDateStr(3); // dateTo is EXCLUSIVE in football-data.org, so +3 to include 2 days ahead
       const url = `/api/matches?dateFrom=${from}&dateTo=${to}`;
       console.log('[API] Fetching:', url);
       const res = await fetch(url);
@@ -568,30 +568,35 @@
         </div>`;
     }
 
-    // Group matches by day
-    const today = getDateStr(0);
-    const tomorrow = getDateStr(1);
-    const todayGames = todayMatches.filter(m => m.utcDate.startsWith(today));
-    const tomorrowGames = todayMatches.filter(m => m.utcDate.startsWith(tomorrow));
+    // Group matches by local date
+    const getLocalDateStr = (utcDate) => new Date(utcDate).toLocaleDateString('sv-SE'); // sv-SE gives YYYY-MM-DD
+    const todayLocal = new Date().toLocaleDateString('sv-SE');
+    const tomorrowLocal = new Date(Date.now() + 86400000).toLocaleDateString('sv-SE');
+    const dayAfterLocal = new Date(Date.now() + 172800000).toLocaleDateString('sv-SE');
 
-    const fmtDate = (offset) => {
-      const d = new Date();
-      d.setDate(d.getDate() + offset);
-      return d.toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' });
-    };
+    const todayGames = todayMatches.filter(m => getLocalDateStr(m.utcDate) === todayLocal);
+    const tomorrowGames = todayMatches.filter(m => getLocalDateStr(m.utcDate) === tomorrowLocal);
+    const dayAfterGames = todayMatches.filter(m => getLocalDateStr(m.utcDate) === dayAfterLocal);
+
+    const fmtDate = (dateStr) => new Date(dateStr + 'T12:00:00').toLocaleDateString(navigator.language, { weekday: 'long', day: 'numeric', month: 'long' });
 
     if (todayGames.length > 0) {
-      html += `<div class="date-header">Hoje — ${fmtDate(0)}</div>`;
+      html += `<div class="date-header">Hoje — ${fmtDate(todayLocal)}</div>`;
       todayGames.forEach(match => { html += renderMatchCard(match); });
     }
 
     if (tomorrowGames.length > 0) {
-      html += `<div class="date-header">Amanhã — ${fmtDate(1)}</div>`;
+      html += `<div class="date-header">Amanhã — ${fmtDate(tomorrowLocal)}</div>`;
       tomorrowGames.forEach(match => { html += renderMatchCard(match); });
     }
 
-    if (todayGames.length === 0 && tomorrowGames.length === 0) {
-      html += `<div class="empty"><div class="icon">📅</div><p>Sem jogos hoje nem amanhã.</p></div>`;
+    if (dayAfterGames.length > 0) {
+      html += `<div class="date-header">${fmtDate(dayAfterLocal)}</div>`;
+      dayAfterGames.forEach(match => { html += renderMatchCard(match); });
+    }
+
+    if (todayGames.length === 0 && tomorrowGames.length === 0 && dayAfterGames.length === 0) {
+      html += `<div class="empty"><div class="icon">📅</div><p>Sem jogos nos próximos dias.</p></div>`;
     }
 
     container.innerHTML = html;
