@@ -851,8 +851,21 @@
     setTimeout(() => { t.className = ''; }, 2800);
   }
 
+  // ── AUTO UPDATE RESULTS ──────────────────────────────────
+  async function autoUpdateResults() {
+    try {
+      await fetch('/api/update-results');
+      console.log('[Results] Auto-updated in background');
+    } catch(e) {
+      console.log('[Results] Auto-update failed silently');
+    }
+  }
+
   // ── INIT ─────────────────────────────────────────────────
   (function init() {
+    // Auto-update results in background when app loads
+    autoUpdateResults();
+
     const saved = localStorage.getItem('bolao_user');
     if (saved) {
       try {
