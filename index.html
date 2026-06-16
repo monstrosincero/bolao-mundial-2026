@@ -674,34 +674,21 @@
     if (btn) { btn.disabled = true; btn.textContent = '...'; }
 
     try {
-      const existing = userPredictions[matchId];
-      let pred;
+      // Upsert — insert or update if already exists
+      const upserted = await sb('predictions', {
+        method: 'POST',
+        headers: {
+          'Prefer': 'resolution=merge-duplicates,return=representation'
+        },
+        body: {
+          user_id: currentUser.id,
+          match_id: matchId,
+          home_score: parseInt(h),
+          away_score: parseInt(a)
+        }
+      });
 
-      if (existing) {
-        // Update existing prediction
-        const updated = await sb(`predictions?id=eq.${existing.id}`, {
-          method: 'PATCH',
-          body: {
-            home_score: parseInt(h),
-            away_score: parseInt(a)
-          }
-        });
-        pred = updated[0];
-      } else {
-        // Insert new prediction
-        const created = await sb('predictions', {
-          method: 'POST',
-          body: {
-            user_id: currentUser.id,
-            match_id: matchId,
-            home_score: parseInt(h),
-            away_score: parseInt(a)
-          }
-        });
-        pred = created[0];
-      }
-
-      userPredictions[matchId] = pred;
+      userPredictions[matchId] = upserted ? upserted[0] : { user_id: currentUser.id, match_id: matchId, home_score: parseInt(h), away_score: parseInt(a) };
       showToast('Palpite guardado! ✓', 'success');
       await loadJogos();
     } catch(e) {
