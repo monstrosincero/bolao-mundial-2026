@@ -674,19 +674,34 @@
     if (btn) { btn.disabled = true; btn.textContent = '...'; }
 
     try {
-      const pred = await sb('predictions', {
-        method: 'POST',
-        prefer: 'resolution=merge-duplicates,return=representation',
-        headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
-        body: {
-          user_id: currentUser.id,
-          match_id: matchId,
-          home_score: parseInt(h),
-          away_score: parseInt(a)
-        }
-      });
+      const existing = userPredictions[matchId];
+      let pred;
 
-      userPredictions[matchId] = pred[0];
+      if (existing) {
+        // Update existing prediction
+        const updated = await sb(`predictions?id=eq.${existing.id}`, {
+          method: 'PATCH',
+          body: {
+            home_score: parseInt(h),
+            away_score: parseInt(a)
+          }
+        });
+        pred = updated[0];
+      } else {
+        // Insert new prediction
+        const created = await sb('predictions', {
+          method: 'POST',
+          body: {
+            user_id: currentUser.id,
+            match_id: matchId,
+            home_score: parseInt(h),
+            away_score: parseInt(a)
+          }
+        });
+        pred = created[0];
+      }
+
+      userPredictions[matchId] = pred;
       showToast('Palpite guardado! ✓', 'success');
       await loadJogos();
     } catch(e) {
