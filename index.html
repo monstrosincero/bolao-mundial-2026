@@ -674,12 +674,14 @@
     if (btn) { btn.disabled = true; btn.textContent = '...'; }
 
     try {
-      // Upsert — insert or update if already exists
-      const upserted = await sb('predictions', {
+      // Delete existing prediction if any, then insert fresh
+      await sb(`predictions?user_id=eq.${currentUser.id}&match_id=eq.${matchId}`, {
+        method: 'DELETE',
+        headers: { 'Prefer': '' }
+      });
+
+      const created = await sb('predictions', {
         method: 'POST',
-        headers: {
-          'Prefer': 'resolution=merge-duplicates,return=representation'
-        },
         body: {
           user_id: currentUser.id,
           match_id: matchId,
@@ -688,7 +690,7 @@
         }
       });
 
-      userPredictions[matchId] = upserted ? upserted[0] : { user_id: currentUser.id, match_id: matchId, home_score: parseInt(h), away_score: parseInt(a) };
+      userPredictions[matchId] = created ? created[0] : { user_id: currentUser.id, match_id: matchId, home_score: parseInt(h), away_score: parseInt(a) };
       showToast('Palpite guardado! ✓', 'success');
       await loadJogos();
     } catch(e) {
