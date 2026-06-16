@@ -392,22 +392,15 @@
 
   // ── SUPABASE HELPER ─────────────────────────────────────
   async function sb(path, opts = {}) {
-    const method = opts.method || 'GET';
-    const headers = {
-      'apikey': SUPABASE_KEY,
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json',
-    };
-    // Only add Prefer header for GET and POST, not DELETE or PATCH
-    if (method === 'GET' || method === 'POST') {
-      headers['Prefer'] = opts.prefer || 'return=representation';
-    }
-    if (opts.headers) {
-      Object.assign(headers, opts.headers);
-    }
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-      headers,
-      method,
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': opts.prefer || 'return=representation',
+        ...opts.headers
+      },
+      method: opts.method || 'GET',
       body: opts.body ? JSON.stringify(opts.body) : undefined
     });
     if (!res.ok) {
@@ -428,7 +421,7 @@
   async function fetchTodayMatches() {
     try {
       const from = getDateStr(0);
-      const to = getDateStr(3); // dateTo is EXCLUSIVE in football-data.org, so +3 to include 2 days ahead
+      const to = getDateStr(2); // dateTo is EXCLUSIVE in football-data.org, so +2 to include tomorrow
       const url = `/api/matches?dateFrom=${from}&dateTo=${to}`;
       console.log('[API] Fetching:', url);
       const res = await fetch(url);
@@ -568,35 +561,30 @@
         </div>`;
     }
 
-    // Group matches by local date
-    const getLocalDateStr = (utcDate) => new Date(utcDate).toLocaleDateString('sv-SE'); // sv-SE gives YYYY-MM-DD
-    const todayLocal = new Date().toLocaleDateString('sv-SE');
-    const tomorrowLocal = new Date(Date.now() + 86400000).toLocaleDateString('sv-SE');
-    const dayAfterLocal = new Date(Date.now() + 172800000).toLocaleDateString('sv-SE');
+    // Group matches by day
+    const today = getDateStr(0);
+    const tomorrow = getDateStr(1);
+    const todayGames = todayMatches.filter(m => m.utcDate.startsWith(today));
+    const tomorrowGames = todayMatches.filter(m => m.utcDate.startsWith(tomorrow));
 
-    const todayGames = todayMatches.filter(m => getLocalDateStr(m.utcDate) === todayLocal);
-    const tomorrowGames = todayMatches.filter(m => getLocalDateStr(m.utcDate) === tomorrowLocal);
-    const dayAfterGames = todayMatches.filter(m => getLocalDateStr(m.utcDate) === dayAfterLocal);
-
-    const fmtDate = (dateStr) => new Date(dateStr + 'T12:00:00').toLocaleDateString(navigator.language, { weekday: 'long', day: 'numeric', month: 'long' });
+    const fmtDate = (offset) => {
+      const d = new Date();
+      d.setDate(d.getDate() + offset);
+      return d.toLocaleDateString('pt-PT', { weekday: 'long', day: 'numeric', month: 'long' });
+    };
 
     if (todayGames.length > 0) {
-      html += `<div class="date-header">Hoje — ${fmtDate(todayLocal)}</div>`;
+      html += `<div class="date-header">Hoje — ${fmtDate(0)}</div>`;
       todayGames.forEach(match => { html += renderMatchCard(match); });
     }
 
     if (tomorrowGames.length > 0) {
-      html += `<div class="date-header">Amanhã — ${fmtDate(tomorrowLocal)}</div>`;
+      html += `<div class="date-header">Amanhã — ${fmtDate(1)}</div>`;
       tomorrowGames.forEach(match => { html += renderMatchCard(match); });
     }
 
-    if (dayAfterGames.length > 0) {
-      html += `<div class="date-header">${fmtDate(dayAfterLocal)}</div>`;
-      dayAfterGames.forEach(match => { html += renderMatchCard(match); });
-    }
-
-    if (todayGames.length === 0 && tomorrowGames.length === 0 && dayAfterGames.length === 0) {
-      html += `<div class="empty"><div class="icon">📅</div><p>Sem jogos nos próximos dias.</p></div>`;
+    if (todayGames.length === 0 && tomorrowGames.length === 0) {
+      html += `<div class="empty"><div class="icon">📅</div><p>Sem jogos hoje nem amanhã.</p></div>`;
     }
 
     container.innerHTML = html;
@@ -607,8 +595,7 @@
     const pred = userPredictions[matchId];
     const isFinished = match.status === 'FINISHED';
     const isLive = match.status === 'IN_PLAY' || match.status === 'PAUSED';
-    const kickoffDate = new Date(match.utcDate);
-    const kickoff = kickoffDate.toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit', timeZoneName: 'short' });
+    const kickoff = new Date(match.utcDate).toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' });
     const group = match.group || match.stage || '';
 
     const home = match.homeTeam?.shortName || match.homeTeam?.name || '?';
@@ -629,13 +616,12 @@
       const ft = match.score?.fullTime;
       centerContent = `<div class="final-score" style="color:var(--red)">${ft?.home ?? 0} – ${ft?.away ?? 0}</div>`;
     } else {
-      const inputDisabled = isFinished || matchStarted;
       centerContent = `
         <input type="number" class="score-input" id="h_${matchId}" min="0" max="20"
-          value="${pred ? pred.home_score : ''}" placeholder="–" ${inputDisabled ? 'disabled' : ''} />
+          value="${pred ? pred.home_score : ''}" placeholder="–" ${isFinished ? 'disabled' : ''} />
         <span class="score-sep">:</span>
         <input type="number" class="score-input" id="a_${matchId}" min="0" max="20"
-          value="${pred ? pred.away_score : ''}" placeholder="–" ${inputDisabled ? 'disabled' : ''} />`;
+          value="${pred ? pred.away_score : ''}" placeholder="–" ${isFinished ? 'disabled' : ''} />`;
     }
 
     let badgeHtml = '';
@@ -650,8 +636,7 @@
       badgeHtml = `<span class="saved-badge show">✓ Guardado: ${pred.home_score}–${pred.away_score}</span>`;
     }
 
-    const matchStarted = new Date(match.utcDate) <= new Date();
-    const canSave = !isFinished && !isLive && !matchStarted;
+    const canSave = !isFinished && !isLive;
 
     return `
       <div class="match-card">
@@ -672,7 +657,7 @@
         </div>
         <div class="match-footer">
           ${badgeHtml || '<span></span>'}
-          ${canSave ? `<button class="btn-save" onclick="savePrediction('${matchId}')">Guardar</button>` : (!isFinished && !isLive && matchStarted) ? `<span class="deadline-note">⏱ Jogo já começou</span>` : '<span></span>'}
+          ${canSave ? `<button class="btn-save" onclick="savePrediction('${matchId}')">Guardar</button>` : '<span></span>'}
         </div>
       </div>`;
   }
@@ -686,14 +671,10 @@
     if (btn) { btn.disabled = true; btn.textContent = '...'; }
 
     try {
-      // Delete existing prediction if any, then insert fresh
-      await sb(`predictions?user_id=eq.${currentUser.id}&match_id=eq.${matchId}`, {
-        method: 'DELETE',
-        headers: { 'Prefer': '' }
-      });
-
-      const created = await sb('predictions', {
+      const pred = await sb('predictions', {
         method: 'POST',
+        prefer: 'resolution=merge-duplicates,return=representation',
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=representation' },
         body: {
           user_id: currentUser.id,
           match_id: matchId,
@@ -702,7 +683,7 @@
         }
       });
 
-      userPredictions[matchId] = created ? created[0] : { user_id: currentUser.id, match_id: matchId, home_score: parseInt(h), away_score: parseInt(a) };
+      userPredictions[matchId] = pred[0];
       showToast('Palpite guardado! ✓', 'success');
       await loadJogos();
     } catch(e) {
@@ -867,21 +848,8 @@
     setTimeout(() => { t.className = ''; }, 2800);
   }
 
-  // ── AUTO UPDATE RESULTS ──────────────────────────────────
-  async function autoUpdateResults() {
-    try {
-      await fetch('/api/update-results');
-      console.log('[Results] Auto-updated in background');
-    } catch(e) {
-      console.log('[Results] Auto-update failed silently');
-    }
-  }
-
   // ── INIT ─────────────────────────────────────────────────
   (function init() {
-    // Auto-update results in background when app loads
-    autoUpdateResults();
-
     const saved = localStorage.getItem('bolao_user');
     if (saved) {
       try {
