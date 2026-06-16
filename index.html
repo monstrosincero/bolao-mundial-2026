@@ -147,6 +147,7 @@
   </div>
 
   <div id="appSection" class="section">
+    <div id="lastUpdated" style="text-align:center;font-size:11px;color:var(--muted);padding:6px 0 0;"></div>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('jogos')">🗓 Jogos</button>
       <button class="tab" onclick="switchTab('ranking-dia')">📊 Ranking do Dia</button>
@@ -225,8 +226,15 @@
 
   async function autoUpdateResults() {
     try {
-      await fetch('/api/update-results');
-    } catch(e) {}
+      const res = await fetch('/api/update-results');
+      const data = await res.json();
+      const now = new Date().toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
+      const el = document.getElementById('lastUpdated');
+      if (el) el.textContent = 'Resultados atualizados às ' + now + (data.updated > 0 ? ' (' + data.updated + ' jogos)' : '');
+    } catch(e) {
+      const el = document.getElementById('lastUpdated');
+      if (el) el.textContent = '';
+    }
   }
 
   // ── AUTH ──────────────────────────────────────────────────
