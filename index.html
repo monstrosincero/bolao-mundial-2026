@@ -332,18 +332,22 @@
   async function checkYesterdayRanking() {
     const yesterday = getLocalDateStr(-1);
     const popupKey = 'popup_shown_' + yesterday;
-    if (localStorage.getItem(popupKey)) return; // já mostrou hoje
+    if (localStorage.getItem(popupKey)) return;
 
     try {
-      // buscar palpites de ontem
-      const preds = await sb('predictions?select=*,users(id,name)&created_at=gte.' + yesterday + 'T00:00:00&created_at=lte.' + yesterday + 'T23:59:59') || [];
+      // buscar jogos que terminaram ontem pelos resultados na BD
       const results = await sb('results?finished=eq.true&select=*') || [];
+      if (!results.length) return;
 
-      if (!preds.length || !results.length) return;
+      // buscar todos os palpites para esses jogos
+      const matchIds = results.map(function(r) { return r.match_id; }).join(',');
+      const preds = await sb('predictions?match_id=in.(' + matchIds + ')&select=*,users(id,name)') || [];
+      if (!preds.length) return;
 
       const resultMap = {};
       results.forEach(function(r) { resultMap[r.match_id] = r; });
 
+      // calcular pontos por utilizador
       const userMap = {};
       preds.forEach(function(p) {
         const uid = p.user_id;
@@ -355,9 +359,8 @@
       const ranking = Object.values(userMap).sort(function(a,b) { return b.pts - a.pts; });
       if (!ranking.length) return;
 
-      // encontrar posição do utilizador atual
       const myPos = ranking.findIndex(function(u) { return u.id === currentUser.id; });
-      if (myPos === -1) return; // não participou ontem
+      if (myPos === -1) return;
 
       const pos = myPos + 1;
       const total = ranking.length;
@@ -367,10 +370,10 @@
       document.getElementById('popupEmoji').textContent = msgData.emoji;
       document.getElementById('popupPos').textContent = pos + 'º lugar de ' + total + ' participantes';
       document.getElementById('popupMsg').textContent = msgData.msg;
-      document.getElementById('popupPts').textContent = 'Você fez ' + myPts + ' ponto' + (myPts !== 1 ? 's' : '') + ' ontem';
+      document.getElementById('popupPts').textContent = 'Você fez ' + myPts + ' ponto' + (myPts !== 1 ? 's' : '') + ' no total';
       document.getElementById('popupOverlay').classList.add('show');
       localStorage.setItem(popupKey, '1');
-    } catch(e) {}
+    } catch(e) { console.error('popup error:', e); }
   }
 
   function closePopup() {
