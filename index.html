@@ -4,31 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Bolão Mundial 2026</title>
+  <meta name="theme-color" content="#0a0e1a"/>
+  <link rel="manifest" href="/manifest.json"/>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Bebas+Neue&display=swap');
-
     :root {
-      --bg: #0a0e1a;
-      --surface: #111827;
-      --surface2: #1a2235;
-      --border: #1e2d45;
-      --accent: #f59e0b;
-      --accent2: #3b82f6;
-      --green: #10b981;
-      --red: #ef4444;
-      --text: #f1f5f9;
-      --muted: #64748b;
-      --card-radius: 12px;
+      --bg: #0a0e1a; --surface: #111827; --border: #1e2d45;
+      --accent: #f59e0b; --accent2: #3b82f6; --green: #10b981;
+      --red: #ef4444; --text: #f1f5f9; --muted: #64748b; --card-radius: 12px;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    header {
-      background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 0 24px; display: flex; align-items: center;
-      justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100;
-    }
+    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
     .logo { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; color: var(--accent); }
     .logo span { color: var(--text); }
     .user-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
@@ -37,11 +25,6 @@
     .btn-logout:hover { border-color: var(--red); color: var(--red); }
 
     main { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
-
-    .tabs { display: flex; gap: 4px; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
-    .tab { flex: 1; padding: 9px; border: none; background: none; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; border-radius: 7px; cursor: pointer; transition: all .2s; }
-    .tab.active { background: var(--accent); color: #000; }
-
     .section { display: none; }
     .section.active { display: block; }
 
@@ -56,6 +39,10 @@
     .btn-primary { width: 100%; padding: 13px; background: var(--accent); color: #000; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; transition: opacity .2s; margin-top: 8px; }
     .btn-primary:hover { opacity: .85; }
     .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+    .tabs { display: flex; gap: 4px; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+    .tab { flex: 1; padding: 9px; border: none; background: none; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; border-radius: 7px; cursor: pointer; transition: all .2s; }
+    .tab.active { background: var(--accent); color: #000; }
 
     .match-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 20px; margin-bottom: 12px; transition: border-color .2s; }
     .match-card:hover { border-color: var(--accent2); }
@@ -74,7 +61,6 @@
     .saved-badge.show { display: flex; }
     .btn-save { padding: 8px 20px; background: var(--accent2); color: #fff; border: none; border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .2s; }
     .btn-save:hover { opacity: .85; }
-    .btn-save:disabled { opacity: .4; cursor: not-allowed; }
     .result-badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
     .result-badge.exact { background: rgba(16,185,129,.15); color: var(--green); }
     .result-badge.winner { background: rgba(59,130,246,.15); color: var(--accent2); }
@@ -83,7 +69,7 @@
     .deadline-note { font-size: 11px; color: var(--muted); font-style: italic; }
 
     .ranking-header { display: grid; grid-template-columns: 40px 1fr 60px 60px 60px; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; padding: 0 16px 10px; border-bottom: 1px solid var(--border); margin-bottom: 8px; }
-    .ranking-row { display: grid; grid-template-columns: 40px 1fr 60px 60px 60px; align-items: center; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; transition: border-color .2s; }
+    .ranking-row { display: grid; grid-template-columns: 40px 1fr 60px 60px 60px; align-items: center; padding: 14px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 6px; }
     .ranking-row.me { border-color: var(--accent); }
     .rank-pos { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--muted); }
     .rank-pos.top1 { color: #ffd700; }
@@ -118,6 +104,23 @@
     #toast.success { border-color: var(--green); color: var(--green); }
     #toast.error { border-color: var(--red); color: var(--red); }
 
+    /* PWA BANNER */
+    #pwaBanner { display: none; background: var(--surface); border: 1px solid var(--accent2); border-radius: 10px; padding: 14px 16px; margin-bottom: 16px; }
+    #pwaBanner p { font-size: 13px; color: var(--text); margin-bottom: 8px; }
+    #pwaBanner small { color: var(--muted); font-size: 12px; }
+    .btn-pwa-close { float: right; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; margin-top: -4px; }
+
+    /* RESULTADO DO DIA POPUP */
+    .popup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.85); z-index: 300; align-items: center; justify-content: center; padding: 20px; }
+    .popup-overlay.show { display: flex; }
+    .popup-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 32px 24px; max-width: 340px; width: 100%; text-align: center; animation: popIn .3s ease; }
+    @keyframes popIn { from { transform: scale(.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .popup-emoji { font-size: 72px; margin-bottom: 12px; line-height: 1; }
+    .popup-pos { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: var(--muted); margin-bottom: 6px; }
+    .popup-msg { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 6px; line-height: 1.3; }
+    .popup-pts { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+    .btn-popup-close { background: var(--accent); color: #000; border: none; padding: 12px 32px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; }
+
     @media (max-width: 480px) {
       .ranking-header, .ranking-row { grid-template-columns: 32px 1fr 50px 50px 50px; }
     }
@@ -129,12 +132,13 @@
   <div class="logo">Bolão <span>Mundial 26</span></div>
   <div class="user-badge" id="headerUser" style="display:none">
     <div class="user-avatar" id="headerAvatar">P</div>
-    <span id="headerName">Pedro</span>
+    <span id="headerName"></span>
     <button class="btn-logout" onclick="logout()">Sair</button>
   </div>
 </header>
 
 <main>
+  <!-- LOGIN -->
   <div id="loginSection" class="section active">
     <div class="login-wrap">
       <div class="login-icon">⚽</div>
@@ -146,18 +150,20 @@
     </div>
   </div>
 
+  <!-- APP -->
   <div id="appSection" class="section">
-    <div id="lastUpdated" style="text-align:center;font-size:11px;color:var(--muted);padding:6px 0 0;"></div>
+    <div id="lastUpdated" style="text-align:center;font-size:11px;color:var(--muted);padding:6px 0 2px;"></div>
+    <div id="pwaBanner">
+      <button class="btn-pwa-close" onclick="closePwaBanner()">×</button>
+      <p>📲 <strong>Ativa as notificações no iPhone!</strong></p>
+      <small>Clica em <strong>⬆️ Partilhar</strong> → <strong>"Adicionar ao ecrã inicial"</strong> e abre a app por aí para receberes alertas antes dos jogos.</small>
+    </div>
     <div class="tabs">
       <button class="tab active" onclick="switchTab('jogos')">🗓 Jogos</button>
-      <button class="tab" onclick="switchTab('ranking-dia')">📊 Ranking do Dia</button>
-      <button class="tab" onclick="switchTab('ranking-geral')">🏆 Ranking Geral</button>
+      <button class="tab" onclick="switchTab('ranking-geral')">🏆 Ranking</button>
     </div>
     <div id="tabJogos" class="section active">
       <div id="matchesContainer"><div class="loader"><div class="spinner"></div></div></div>
-    </div>
-    <div id="tabRankingDia" class="section">
-      <div id="rankingDiaContainer"><div class="loader"><div class="spinner"></div></div></div>
     </div>
     <div id="tabRankingGeral" class="section">
       <div id="rankingGeralContainer"><div class="loader"><div class="spinner"></div></div></div>
@@ -167,17 +173,52 @@
 
 <div id="toast"></div>
 
+<!-- POPUP RESULTADO DO DIA -->
+<div class="popup-overlay" id="popupOverlay">
+  <div class="popup-box">
+    <div class="popup-emoji" id="popupEmoji"></div>
+    <div class="popup-pos" id="popupPos"></div>
+    <div class="popup-msg" id="popupMsg"></div>
+    <div class="popup-pts" id="popupPts"></div>
+    <button class="btn-popup-close" onclick="closePopup()">Bora ver os jogos! ⚽</button>
+  </div>
+</div>
+
 <script>
   const SUPABASE_URL = 'https://fwlrininphvlwdsykisz.supabase.co';
   const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ3bHJpbmlucGh2bHdkc3lraXN6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDE4NTAsImV4cCI6MjA5NzExNzg1MH0.dvyzsAZxD5wrwCKuR1Z_FnmH1oGBmbDf6ZZlZefMqEM';
-  const WC_CODE = 'WC';
 
   let currentUser = null;
   let todayMatches = [];
   let userPredictions = {};
 
-  // ── SUPABASE ─────────────────────────────────────────────
-  async function sb(path, opts = {}) {
+  // ── MENSAGENS POR POSIÇÃO ─────────────────────────────────
+  const RANK_MESSAGES = [
+    { emoji: '🏆🔥', msg: 'Tá on fire! Você é o craque do bolão hoje, meu parceiro! Ninguém te para!' },
+    { emoji: '🥈😤', msg: 'Quase, meu chegado! Alguém é mais pica que tu hoje, mas não desiste não!' },
+    { emoji: '🥉😅', msg: 'Terceiro lugar, viu? Poderia ser pior... mas também poderia ser muito melhor, hein!' },
+    { emoji: '😬⚽', msg: 'Tá no meio do pelotão, né? Nem craque nem pipoqueiro. Mediano, meu consagrado!' },
+    { emoji: '😓🫠', msg: 'Meu amigo, o bicho tá pegando. Os palpites tão saindo torto hoje, hein!' },
+    { emoji: '🤦😂', msg: 'Cara, você frangou feio hoje! Até o goleiro palpitaria melhor que você!' },
+    { emoji: '💩😭', msg: 'Último lugar, meu irmão! Você não percebe nada de futebol não é? Amanhã é outro dia!' },
+  ];
+
+  function getRankMessage(pos, total) {
+    if (total === 1) return { emoji: '⚽😎', msg: 'Único participante! Campeão absoluto por W.O., meu rei!' };
+    if (pos === 1) return RANK_MESSAGES[0];
+    if (pos === 2) return RANK_MESSAGES[1];
+    if (pos === 3) return RANK_MESSAGES[2];
+    if (pos === total) return RANK_MESSAGES[6]; // último
+    // meio do campo
+    const mid = Math.ceil(total / 2);
+    if (pos <= mid) return RANK_MESSAGES[3];
+    if (pos <= total - 2) return RANK_MESSAGES[4];
+    return RANK_MESSAGES[5];
+  }
+
+  // ── SUPABASE ──────────────────────────────────────────────
+  async function sb(path, opts) {
+    opts = opts || {};
     const method = opts.method || 'GET';
     const headers = {
       'apikey': SUPABASE_KEY,
@@ -189,7 +230,7 @@
     }
     if (opts.headers) Object.assign(headers, opts.headers);
     const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
-      headers, method,
+      headers: headers, method: method,
       body: opts.body ? JSON.stringify(opts.body) : undefined
     });
     if (!res.ok) { const err = await res.text(); throw new Error(err); }
@@ -197,11 +238,11 @@
     return text ? JSON.parse(text) : null;
   }
 
-  // ── DATES ─────────────────────────────────────────────────
+  // ── DATAS ─────────────────────────────────────────────────
   function getLocalDateStr(offset) {
     const d = new Date();
     d.setDate(d.getDate() + (offset || 0));
-    return d.toLocaleDateString('sv-SE'); // YYYY-MM-DD in local time
+    return d.toLocaleDateString('sv-SE');
   }
 
   function getUTCDateStr(offset) {
@@ -214,12 +255,12 @@
     return new Date(utcDate).toLocaleDateString('sv-SE');
   }
 
-  // ── API ───────────────────────────────────────────────────
+  // ── API JOGOS ─────────────────────────────────────────────
   async function fetchMatches() {
     const from = getUTCDateStr(0);
     const to = getUTCDateStr(3);
     const res = await fetch('/api/matches?dateFrom=' + from + '&dateTo=' + to);
-    if (!res.ok) throw new Error('API error ' + res.status);
+    if (!res.ok) throw new Error('API error');
     const data = await res.json();
     return data.matches || [];
   }
@@ -231,10 +272,109 @@
       const now = new Date().toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
       const el = document.getElementById('lastUpdated');
       if (el) el.textContent = 'Resultados atualizados às ' + now + (data.updated > 0 ? ' (' + data.updated + ' jogos)' : '');
-    } catch(e) {
-      const el = document.getElementById('lastUpdated');
-      if (el) el.textContent = '';
+    } catch(e) {}
+  }
+
+  // ── NOTIFICAÇÕES PUSH ─────────────────────────────────────
+  async function setupNotifications() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') return;
+      scheduleMatchNotifications(reg);
+    } catch(e) {}
+  }
+
+  function scheduleMatchNotifications(reg) {
+    if (!todayMatches.length) return;
+    const now = Date.now();
+    todayMatches.forEach(function(match) {
+      if (match.status !== 'TIMED' && match.status !== 'SCHEDULED') return;
+      const kickoff = new Date(match.utcDate).getTime();
+      const notifyAt = kickoff - 15 * 60 * 1000;
+      if (notifyAt <= now) return;
+      const matchId = String(match.id);
+      const pred = userPredictions[matchId];
+      if (pred) return; // já tem palpite, não notifica
+      const delay = notifyAt - now;
+      const home = match.homeTeam && match.homeTeam.name || '?';
+      const away = match.awayTeam && match.awayTeam.name || '?';
+      setTimeout(function() {
+        // verifica novamente antes de notificar
+        if (userPredictions[matchId]) return;
+        reg.showNotification('Bolão Mundial 2026 ⚽', {
+          body: 'Faltam 15 min! Vai palpitar: ' + home + ' vs ' + away,
+          icon: '/icon.png',
+          tag: 'match-' + matchId,
+          requireInteraction: true
+        });
+      }, delay);
+    });
+  }
+
+  // ── PWA BANNER (iPhone) ───────────────────────────────────
+  function checkPwaBanner() {
+    const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isStandalone = window.navigator.standalone;
+    const dismissed = localStorage.getItem('pwa_banner_dismissed');
+    if (isIos && !isStandalone && !dismissed) {
+      document.getElementById('pwaBanner').style.display = 'block';
     }
+  }
+
+  function closePwaBanner() {
+    document.getElementById('pwaBanner').style.display = 'none';
+    localStorage.setItem('pwa_banner_dismissed', '1');
+  }
+
+  // ── POPUP RESULTADO DO DIA ANTERIOR ──────────────────────
+  async function checkYesterdayRanking() {
+    const yesterday = getLocalDateStr(-1);
+    const popupKey = 'popup_shown_' + yesterday;
+    if (localStorage.getItem(popupKey)) return; // já mostrou hoje
+
+    try {
+      // buscar palpites de ontem
+      const preds = await sb('predictions?select=*,users(id,name)&created_at=gte.' + yesterday + 'T00:00:00&created_at=lte.' + yesterday + 'T23:59:59') || [];
+      const results = await sb('results?finished=eq.true&select=*') || [];
+
+      if (!preds.length || !results.length) return;
+
+      const resultMap = {};
+      results.forEach(function(r) { resultMap[r.match_id] = r; });
+
+      const userMap = {};
+      preds.forEach(function(p) {
+        const uid = p.user_id;
+        if (!userMap[uid]) userMap[uid] = { id: uid, name: (p.users && p.users.name) || 'Anônimo', pts: 0 };
+        const res = resultMap[p.match_id];
+        if (res) userMap[uid].pts += calcPoints(p, { home: res.home_score, away: res.away_score });
+      });
+
+      const ranking = Object.values(userMap).sort(function(a,b) { return b.pts - a.pts; });
+      if (!ranking.length) return;
+
+      // encontrar posição do utilizador atual
+      const myPos = ranking.findIndex(function(u) { return u.id === currentUser.id; });
+      if (myPos === -1) return; // não participou ontem
+
+      const pos = myPos + 1;
+      const total = ranking.length;
+      const myPts = ranking[myPos].pts;
+      const msgData = getRankMessage(pos, total);
+
+      document.getElementById('popupEmoji').textContent = msgData.emoji;
+      document.getElementById('popupPos').textContent = pos + 'º lugar de ' + total + ' participantes';
+      document.getElementById('popupMsg').textContent = msgData.msg;
+      document.getElementById('popupPts').textContent = 'Você fez ' + myPts + ' ponto' + (myPts !== 1 ? 's' : '') + ' ontem';
+      document.getElementById('popupOverlay').classList.add('show');
+      localStorage.setItem(popupKey, '1');
+    } catch(e) {}
+  }
+
+  function closePopup() {
+    document.getElementById('popupOverlay').classList.remove('show');
   }
 
   // ── AUTH ──────────────────────────────────────────────────
@@ -250,11 +390,11 @@
       if (users && users.length > 0) {
         user = users[0];
         if (user.name !== name) {
-          await sb('users?id=eq.' + user.id, { method: 'PATCH', body: { name } });
+          await sb('users?id=eq.' + user.id, { method: 'PATCH', body: { name: name } });
           user.name = name;
         }
       } else {
-        const created = await sb('users', { method: 'POST', body: { name, email } });
+        const created = await sb('users', { method: 'POST', body: { name: name, email: email } });
         user = created[0];
       }
       setUser(user);
@@ -272,7 +412,10 @@
     document.getElementById('headerUser').style.display = 'flex';
     document.getElementById('headerAvatar').textContent = user.name[0].toUpperCase();
     document.getElementById('headerName').textContent = user.name;
+    checkPwaBanner();
+    autoUpdateResults();
     loadJogos();
+    setTimeout(function() { checkYesterdayRanking(); }, 2000);
   }
 
   function logout() {
@@ -289,13 +432,11 @@
 
   // ── TABS ──────────────────────────────────────────────────
   function switchTab(tab) {
-    document.querySelectorAll('.tabs .tab').forEach((t,i) => {
-      t.classList.toggle('active', ['jogos','ranking-dia','ranking-geral'][i] === tab);
+    document.querySelectorAll('.tabs .tab').forEach(function(t,i) {
+      t.classList.toggle('active', ['jogos','ranking-geral'][i] === tab);
     });
     document.getElementById('tabJogos').classList.toggle('active', tab === 'jogos');
-    document.getElementById('tabRankingDia').classList.toggle('active', tab === 'ranking-dia');
     document.getElementById('tabRankingGeral').classList.toggle('active', tab === 'ranking-geral');
-    if (tab === 'ranking-dia') loadRankingDia();
     if (tab === 'ranking-geral') loadRankingGeral();
   }
 
@@ -306,12 +447,13 @@
     try {
       todayMatches = await fetchMatches();
       if (currentUser && todayMatches.length > 0) {
-        const ids = todayMatches.map(m => m.id).join(',');
+        const ids = todayMatches.map(function(m) { return m.id; }).join(',');
         const preds = await sb('predictions?user_id=eq.' + currentUser.id + '&match_id=in.(' + ids + ')&select=*');
         userPredictions = {};
-        (preds || []).forEach(p => { userPredictions[p.match_id] = p; });
+        (preds || []).forEach(function(p) { userPredictions[p.match_id] = p; });
       }
       renderMatches(container);
+      setupNotifications();
     } catch(e) {
       container.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erro ao carregar os jogos.<br>Tenta novamente.</p></div>';
     }
@@ -323,9 +465,9 @@
       return;
     }
 
-    const finishedMatches = todayMatches.filter(m => m.status === 'FINISHED');
+    const finishedMatches = todayMatches.filter(function(m) { return m.status === 'FINISHED'; });
     let totalPts = 0, exactCount = 0, winnerCount = 0;
-    finishedMatches.forEach(m => {
+    finishedMatches.forEach(function(m) {
       const pred = userPredictions[String(m.id)];
       if (!pred) return;
       const pts = calcPoints(pred, m.score && m.score.fullTime);
@@ -343,24 +485,21 @@
         '</div>';
     }
 
-    // Group by local date
     const todayStr = getLocalDateStr(0);
     const tomorrowStr = getLocalDateStr(1);
     const dayAfterStr = getLocalDateStr(2);
 
     const groups = [
-      { label: 'Hoje', dateStr: todayStr, matches: todayMatches.filter(m => matchLocalDate(m.utcDate) === todayStr) },
-      { label: 'Amanhã', dateStr: tomorrowStr, matches: todayMatches.filter(m => matchLocalDate(m.utcDate) === tomorrowStr) },
-      { label: null, dateStr: dayAfterStr, matches: todayMatches.filter(m => matchLocalDate(m.utcDate) === dayAfterStr) },
+      { label: 'Hoje', dateStr: todayStr, matches: todayMatches.filter(function(m) { return matchLocalDate(m.utcDate) === todayStr; }) },
+      { label: 'Amanhã', dateStr: tomorrowStr, matches: todayMatches.filter(function(m) { return matchLocalDate(m.utcDate) === tomorrowStr; }) },
+      { label: null, dateStr: dayAfterStr, matches: todayMatches.filter(function(m) { return matchLocalDate(m.utcDate) === dayAfterStr; }) },
     ];
 
-    groups.forEach(g => {
+    groups.forEach(function(g) {
       if (!g.matches.length) return;
-      const dateLabel = g.label
-        ? g.label + ' — ' + new Date(g.dateStr + 'T12:00:00').toLocaleDateString(navigator.language, { weekday: 'long', day: 'numeric', month: 'long' })
-        : new Date(g.dateStr + 'T12:00:00').toLocaleDateString(navigator.language, { weekday: 'long', day: 'numeric', month: 'long' });
+      const dateLabel = (g.label ? g.label + ' — ' : '') + new Date(g.dateStr + 'T12:00:00').toLocaleDateString(navigator.language, { weekday: 'long', day: 'numeric', month: 'long' });
       html += '<div class="date-header">' + dateLabel + '</div>';
-      g.matches.forEach(m => { html += renderMatchCard(m); });
+      g.matches.forEach(function(m) { html += renderMatchCard(m); });
     });
 
     container.innerHTML = html;
@@ -374,10 +513,10 @@
     const matchStarted = new Date(match.utcDate) <= new Date();
     const kickoff = new Date(match.utcDate).toLocaleTimeString(navigator.language, { hour: '2-digit', minute: '2-digit' });
     const group = match.group || match.stage || '';
-    const home = match.homeTeam && (match.homeTeam.shortName || match.homeTeam.name) || '?';
-    const away = match.awayTeam && (match.awayTeam.shortName || match.awayTeam.name) || '?';
-    const homeFull = match.homeTeam && match.homeTeam.name || home;
-    const awayFull = match.awayTeam && match.awayTeam.name || away;
+    const home = (match.homeTeam && (match.homeTeam.shortName || match.homeTeam.name)) || '?';
+    const away = (match.awayTeam && (match.awayTeam.shortName || match.awayTeam.name)) || '?';
+    const homeFull = (match.homeTeam && match.homeTeam.name) || home;
+    const awayFull = (match.awayTeam && match.awayTeam.name) || away;
 
     let statusLabel = isLive
       ? '<span style="color:var(--red);font-weight:700">🔴 Em jogo</span>'
@@ -392,7 +531,7 @@
       const ft = match.score && match.score.fullTime;
       centerContent = '<div class="final-score" style="color:var(--red)">' + (ft ? ft.home : 0) + ' \u2013 ' + (ft ? ft.away : 0) + '</div>';
     } else {
-      const dis = (isFinished || matchStarted) ? 'disabled' : '';
+      const dis = (matchStarted) ? 'disabled' : '';
       centerContent =
         '<input type="number" class="score-input" id="h_' + matchId + '" min="0" max="20" value="' + (pred ? pred.home_score : '') + '" placeholder="\u2013" ' + dis + ' />' +
         '<span class="score-sep">:</span>' +
@@ -414,7 +553,7 @@
     const canSave = !isFinished && !isLive && !matchStarted;
     const footerRight = canSave
       ? '<button class="btn-save" onclick="savePrediction(\'' + matchId + '\')">Guardar</button>'
-      : matchStarted && !isFinished && !isLive
+      : (matchStarted && !isFinished && !isLive)
         ? '<span class="deadline-note">\u23f1 Jogo j\u00e1 come\u00e7ou</span>'
         : '<span></span>';
 
@@ -435,30 +574,17 @@
     if (!hEl || !aEl) return;
     const h = hEl.value, a = aEl.value;
     if (h === '' || a === '') return showToast('Coloca um resultado nos dois campos', 'error');
-
     const btn = document.querySelector('[onclick="savePrediction(\'' + matchId + '\')"]');
     if (btn) { btn.disabled = true; btn.textContent = '...'; }
-
     try {
-      // Delete existing then insert fresh — 100% reliable
       await fetch(SUPABASE_URL + '/rest/v1/predictions?user_id=eq.' + currentUser.id + '&match_id=eq.' + matchId, {
         method: 'DELETE',
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_KEY
-        }
+        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
       });
-
       const created = await sb('predictions', {
         method: 'POST',
-        body: {
-          user_id: currentUser.id,
-          match_id: matchId,
-          home_score: parseInt(h),
-          away_score: parseInt(a)
-        }
+        body: { user_id: currentUser.id, match_id: matchId, home_score: parseInt(h), away_score: parseInt(a) }
       });
-
       userPredictions[matchId] = created ? created[0] : { user_id: currentUser.id, match_id: matchId, home_score: parseInt(h), away_score: parseInt(a) };
       showToast('Palpite guardado! \u2713', 'success');
       await loadJogos();
@@ -473,69 +599,43 @@
     const container = document.getElementById('rankingGeralContainer');
     container.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
     try {
-      const ranking = await computeRanking(null);
-      renderRanking(container, ranking, 'Ranking Geral \u2014 Todos os Jogos');
+      const preds = await sb('predictions?select=*,users(id,name,email)') || [];
+      const results = await sb('results?finished=eq.true&select=*') || [];
+      const resultMap = {};
+      results.forEach(function(r) { resultMap[r.match_id] = r; });
+      todayMatches.filter(function(m) { return m.status === 'FINISHED'; }).forEach(function(m) {
+        const mid = String(m.id);
+        if (!resultMap[mid] && m.score && m.score.fullTime) {
+          resultMap[mid] = { match_id: mid, home_score: m.score.fullTime.home, away_score: m.score.fullTime.away, finished: true };
+        }
+      });
+      const userMap = {};
+      preds.forEach(function(p) {
+        const uid = p.user_id;
+        if (!userMap[uid]) userMap[uid] = { id: uid, name: (p.users && p.users.name) || 'Anônimo', pts: 0, exact: 0, winner: 0 };
+        const res = resultMap[p.match_id];
+        if (res) {
+          const pts = calcPoints(p, { home: res.home_score, away: res.away_score });
+          userMap[uid].pts += pts;
+          if (pts === 3) userMap[uid].exact++;
+          if (pts === 1) userMap[uid].winner++;
+        }
+      });
+      const ranking = Object.values(userMap).sort(function(a,b) { return b.pts - a.pts || b.exact - a.exact; });
+      renderRanking(container, ranking);
     } catch(e) {
-      container.innerHTML = '<div class="empty"><div class="icon">\u26a0\ufe0f</div><p>Erro ao carregar ranking.</p></div>';
+      container.innerHTML = '<div class="empty"><div class="icon">⚠️</div><p>Erro ao carregar ranking.</p></div>';
     }
   }
 
-  async function loadRankingDia() {
-    const container = document.getElementById('rankingDiaContainer');
-    container.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
-    try {
-      const today = getLocalDateStr(0);
-      const ranking = await computeRanking(today);
-      const label = new Date().toLocaleDateString(navigator.language, { day: 'numeric', month: 'long' });
-      renderRanking(container, ranking, 'Ranking de Hoje \u2014 ' + label);
-    } catch(e) {
-      container.innerHTML = '<div class="empty"><div class="icon">\u26a0\ufe0f</div><p>Erro ao carregar ranking.</p></div>';
-    }
-  }
-
-  async function computeRanking(dateFilter) {
-    let predQuery = 'predictions?select=*,users(id,name,email)';
-    if (dateFilter) {
-      predQuery += '&created_at=gte.' + dateFilter + 'T00:00:00&created_at=lte.' + dateFilter + 'T23:59:59';
-    }
-    const preds = await sb(predQuery) || [];
-    const results = await sb('results?finished=eq.true&select=*') || [];
-    const resultMap = {};
-    results.forEach(r => { resultMap[r.match_id] = r; });
-
-    todayMatches.filter(m => m.status === 'FINISHED').forEach(m => {
-      const mid = String(m.id);
-      if (!resultMap[mid] && m.score && m.score.fullTime) {
-        resultMap[mid] = { match_id: mid, home_score: m.score.fullTime.home, away_score: m.score.fullTime.away, finished: true };
-      }
-    });
-
-    const userMap = {};
-    preds.forEach(p => {
-      const uid = p.user_id;
-      if (!userMap[uid]) {
-        userMap[uid] = { id: uid, name: (p.users && p.users.name) || 'An\u00f3nimo', pts: 0, exact: 0, winner: 0 };
-      }
-      const res = resultMap[p.match_id];
-      if (res) {
-        const pts = calcPoints(p, { home: res.home_score, away: res.away_score });
-        userMap[uid].pts += pts;
-        if (pts === 3) userMap[uid].exact++;
-        if (pts === 1) userMap[uid].winner++;
-      }
-    });
-
-    return Object.values(userMap).sort((a,b) => b.pts - a.pts || b.exact - a.exact);
-  }
-
-  function renderRanking(container, ranking, title) {
+  function renderRanking(container, ranking) {
     if (!ranking.length) {
-      container.innerHTML = '<div class="empty"><div class="icon">\ud83c\udfc6</div><p>Sem dados ainda.<br>Faz os teus palpites!</p></div>';
+      container.innerHTML = '<div class="empty"><div class="icon">🏆</div><p>Sem dados ainda.<br>Faz os teus palpites!</p></div>';
       return;
     }
-    let html = '<div class="date-header">' + title + '</div>' +
+    let html = '<div class="date-header">Ranking Geral</div>' +
       '<div class="ranking-header"><span>#</span><span>Jogador</span><span style="text-align:center">Pts</span><span style="text-align:center">\u2713 Exatos</span><span style="text-align:center">\u2192 Vencedor</span></div>';
-    ranking.forEach((u, i) => {
+    ranking.forEach(function(u, i) {
       const pos = i + 1;
       const posClass = pos === 1 ? 'top1' : pos === 2 ? 'top2' : pos === 3 ? 'top3' : '';
       const isMe = currentUser && u.id === currentUser.id;
@@ -593,7 +693,6 @@
 
   // ── INIT ──────────────────────────────────────────────────
   (function init() {
-    autoUpdateResults();
     const saved = localStorage.getItem('bolao_user');
     if (saved) {
       try {
